@@ -26,7 +26,8 @@ export default function DarkModeToggle({ buttonId }) { // Added buttonId prop
       
       document.documentElement.classList.toggle('dark', isInitiallyDark);
     }
-  }, []); // Empty dependency array - only run once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Empty dependency array - only run once on mount to avoid unnecessary rerenders
 
   const toggleDarkMode = () => {
     const newMode = !isDarkMode; // Read from context's isDarkMode
