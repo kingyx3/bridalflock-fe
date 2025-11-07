@@ -1,7 +1,7 @@
 import { useStateProvider } from "../../context/StateContext";
 import { reducerCases } from "../../context/constants";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { FaStar } from "react-icons/fa";
 import { addReview as callAddReviewApi } from "../../utils/api";
 
@@ -11,7 +11,7 @@ function AddReview({ reviewEligibility }) {
   const router = useRouter();
   const { serviceId } = router.query;
 
-  const handleAddReview = async () => {
+  const handleAddReview = useCallback(async () => {
     if (!serviceId || !data.reviewText || data.rating === 0) {
       // Basic validation, can be enhanced
       alert("Please provide a review text and a rating.");
@@ -35,7 +35,7 @@ function AddReview({ reviewEligibility }) {
       console.error("Error submitting review:", err);
       alert(`Failed to submit review: ${err.message || "Please try again."}`);
     }
-  };
+  }, [serviceId, data, dispatch, user]);
 
   if (!reviewEligibility) {
     return <div className="mb-10 p-4 text-neutral-medium dark:text-neutral-light">Loading review eligibility...</div>;
@@ -111,4 +111,4 @@ function AddReview({ reviewEligibility }) {
   );
 }
 
-export default AddReview;
+export default React.memo(AddReview);

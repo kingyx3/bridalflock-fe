@@ -1,6 +1,6 @@
 import { useStateProvider } from "../../context/StateContext";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { FaStar } from "react-icons/fa";
 
 function Reviews() {
@@ -79,4 +79,4 @@ function Reviews() {
   );
 }
 
-export default Reviews;
+export default React.memo(Reviews);
