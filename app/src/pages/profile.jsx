@@ -20,22 +20,28 @@ function Profile() {
   const [hasChanged, setHasChanged] = useState(false);
 
   const userNameRef = useRef(null); // for scroll/focus on error
+  const initializedRef = useRef(false); // Track if we've initialized from user data
   const [data, setData] = useState({
     userName: "",
     description: "",
   });
 
   useEffect(() => {
-    if (user) {
+    if (user && !initializedRef.current) {
+      // Only initialize once when user data first becomes available
       setData({
         userName: user?.userName || "",
         description: user?.description || "",
       });
-      // Only set avatar if not already set to avoid flickering
-      if (!avatarSrc && user.avatar) {
+      if (user?.avatar) {
         setAvatarSrc(user.avatar);
       }
       setIsLoaded(true);
+      initializedRef.current = true;
+    } else if (!user && initializedRef.current) {
+      // Reset if user logs out
+      initializedRef.current = false;
+      setIsLoaded(false);
     }
   }, [user]);
 
