@@ -1,0 +1,36 @@
+"use strict";
+exports.id = 698;
+exports.ids = [698];
+exports.modules = {
+
+/***/ 4698:
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "r": () => (/* binding */ envVars)
+/* harmony export */ });
+const envVars =  true ? {
+    REACT_APP_NAME: "BridalFlock",
+    REACT_APP_TYPE: "PROD",
+    REACT_APP_DEBUG: false,
+    testMode: false,
+    REACT_APP_FB_apiKey: "AIzaSyAqigQTr0f4F8AuO0aR55obn_D7iWBk0l4",
+    REACT_APP_FB_authDomain: "bridalflock-dev.firebaseapp.com",
+    REACT_APP_FB_databaseURL: "https://bridalflock-dev-default-rtdb.asia-southeast1.firebasedatabase.app",
+    REACT_APP_FB_projectId: "bridalflock-dev",
+    REACT_APP_FB_storageBucket: "bridalflock-dev.firebasestorage.app",
+    REACT_APP_FB_messagingSenderId: "236819939871",
+    REACT_APP_FB_appId: "1:236819939871:web:ffed4e46783d79c2824b2a",
+    REACT_APP_FB_recaptchaSiteKey: "",
+    STRIPE_PAYMENT_LINK: "",
+    STRIPE_PK: "pk_test_51Rb1VzQwcO9kmiBdCPcXOLiuNSm2X1MHqQmuVlbJy2TvJYidhmD7FXduGUTXHp9oIr7n5z9RxtAFLaOYZ7LmyhFn00ZziH6krG",
+    WEB_URL: "https://bridalflock-dev.firebaseapp.com",
+    WEB_DOMAIN: "bridalflock-dev.firebaseapp.com",
+    REACT_APP_SUPPORT_EMAIL: "support@bridalflock.com"
+} : 0;
+
+
+/***/ })
+
+};
+;
