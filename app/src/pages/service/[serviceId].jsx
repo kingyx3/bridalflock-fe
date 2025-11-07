@@ -16,10 +16,6 @@ function ServicePage() {
   const [reviewEligibility, setReviewEligibility] = useState({ eligible: false, reason: null, loading: true });
 
   useEffect(() => {
-    dispatch({ type: reducerCases.SET_SERVICE_DATA, serviceData: undefined });
-  }, [dispatch]);
-
-  useEffect(() => {
     let isMounted = true;
     const fetchServiceData = async () => {
       // Add the guard for serviceId
@@ -52,6 +48,8 @@ function ServicePage() {
     fetchServiceData();
     return () => {
       isMounted = false;
+      // Clean up service data when leaving the page
+      dispatch({ type: reducerCases.SET_SERVICE_DATA, serviceData: undefined });
     };
   }, [serviceId, dispatch]);
 
