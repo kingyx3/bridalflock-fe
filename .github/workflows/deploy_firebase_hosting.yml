@@ -1,0 +1,68 @@
+name: Deploy to Firebase Hosting
+
+on:
+  push:
+    branches:
+      - "*"
+    paths:
+      - app/**
+      - app/src/**
+      - ".github/workflows/deploy_firebase_hosting.yml"
+
+defaults:
+  run:
+    working-directory: app
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Cache Node Modules
+        id: cache-npm
+        uses: actions/cache@v3
+        with:
+          path: app/node_modules # Caching dependencies
+          key: ${{ runner.os }}-node-${{ hashFiles('app/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-${{ hashFiles('app/package-lock.json') }}
+            ${{ runner.os }}-node-\
+
+      - name: Install dependencies
+        if: steps.cache-npm.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - name: Run Jest tests
+        run: npm test --silent
+        working-directory: app
+        continue-on-error: true
+
+      - name: Build the project (Development)
+        if: github.ref != 'refs/heads/main'
+        run: NODE_ENV=development npm run build
+
+      - name: Build the project (Production)
+        if: github.ref == 'refs/heads/main'
+        run: NODE_ENV=production npm run build
+
+      - name: Deploy to Firebase (Development)
+        if: github.ref != 'refs/heads/main'
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_BRIDALFLOCK_DEV }}
+          channelId: live
+          projectId: bridalflock-dev
+          entryPoint: app
+
+      - name: Deploy to Firebase (Production)
+        if: github.ref == 'refs/heads/main'
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_BRIDALFLOCK_DEV }}
+          channelId: live
+          projectId: bridalflock-dev
+          entryPoint: app

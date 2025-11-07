@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base body styles */
+body {
+  @apply bg-neutral-light text-neutral-dark transition-colors duration-300 ease-in-out;
+  /* Add any other base body styles here */
+}
+
+.dark body {
+  /* Using darker neutral for background and lighter for text in dark mode */
+  /* Consider creating specific dark theme colors like 'dm-bg' or 'dm-text' in tailwind.config.js if more nuance is needed */
+  @apply bg-neutral-dark text-neutral-light;
+}
+
+/* Selection styles for dark mode */
+.dark ::selection {
+  @apply bg-accent text-white; /* Accent color for selection background */
+}
+
+/* Default selection style */
+::selection {
+  /* Using a lighter shade of accent or secondary for light mode selection */
+  @apply bg-accent bg-opacity-50 text-neutral-dark; /* Accent with opacity, or a specific lighter pastel */
+}
+
+
+::-webkit-scrollbar {
+  width: 8px; /* Slightly wider for better interaction if desired */
+}
+::-webkit-scrollbar-track {
+  @apply bg-neutral-light; /* Light neutral for the track */
+}
+.dark ::-webkit-scrollbar-track {
+  @apply bg-neutral-dark; /* Dark neutral for the track in dark mode */
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-neutral-medium bg-opacity-70 rounded; /* Medium neutral for the thumb with some opacity */
+}
+.dark ::-webkit-scrollbar-thumb {
+  @apply bg-neutral-light bg-opacity-70 rounded; /* Lighter neutral for the thumb in dark mode */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
