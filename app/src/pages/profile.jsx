@@ -33,7 +33,7 @@ function Profile() {
         userName: user?.userName || "",
         description: user?.description || "",
       });
-      if (user.avatar) {
+      if (user?.avatar) {
         setAvatarSrc(user.avatar);
       }
       setIsLoaded(true);
