@@ -231,6 +231,7 @@ function Profile() {
                       id="userName"
                       value={data.userName}
                       onChange={handleChange}
+                      autoComplete="username"
                       className="block w-full pl-8 pr-3 py-3 border border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white rounded-lg focus:ring-2 focus:ring-primary-darker focus:border-primary-darker transition"
                       placeholder="yourusername"
                     />
@@ -247,6 +248,7 @@ function Profile() {
                     id="email"
                     value={user?.email || ""}
                     readOnly
+                    autoComplete="email"
                     className="block w-full px-4 py-3 border border-gray-300 bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-400 rounded-lg focus:ring-0 focus:border-gray-300 cursor-not-allowed transition"
                     placeholder="your.email@example.com"
                   />
@@ -263,6 +265,7 @@ function Profile() {
                     rows={3}
                     value={data.description}
                     onChange={handleChange}
+                    autoComplete="off"
                     className="block w-full px-4 py-3 border border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white rounded-lg focus:ring-2 focus:ring-primary-darker focus:border-primary-darker transition"
                     placeholder="Tell us about yourself..."
                   />
