@@ -166,7 +166,20 @@ function AuthSync({ children }) {
 }
 
 // Define public paths outside component to avoid recreating on each render
-const PUBLIC_PATHS = ["/terms-of-service", "/privacy-policy"];
+const PUBLIC_PATHS = ["/terms-of-service", "/privacy-policy", "/search"];
+
+// Helper function to check if a path should be public
+const isPublicPath = (pathname) => {
+  // Check exact matches
+  if (PUBLIC_PATHS.includes(pathname) || pathname === "/") {
+    return true;
+  }
+  // Check dynamic routes - service detail pages should be public
+  if (pathname.startsWith("/service/")) {
+    return true;
+  }
+  return false;
+};
 
 function Layout({ children, userId, isLoading, initialAuthChecked }) {
   const { navigate, navigateWithRedirect, router } = useNavigation();
@@ -175,7 +188,7 @@ function Layout({ children, userId, isLoading, initialAuthChecked }) {
   useEffect(() => {
     if (typeof window === "undefined") return; // Ensure client-side only
 
-    const pathIsProtected = !PUBLIC_PATHS.includes(router.pathname) && router.pathname !== "/";
+    const pathIsProtected = !isPublicPath(router.pathname);
 
     // if user has no username, and is not on the profile page, redirect to the profile page
     if (initialAuthChecked && !isLoading && user && !user.userName && router.pathname !== "/profile") {
