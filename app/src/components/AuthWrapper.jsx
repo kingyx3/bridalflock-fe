@@ -41,7 +41,7 @@ function AuthWrapper() {
     setIsEmailValid(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
   }, [email]);
 
-  const handleGoogleAuth = async () => {
+  const handleGoogleAuth = useCallback(async () => {
     if (isSubmitting) return;
     setIsSubmitting(true);
     try {
@@ -74,9 +74,9 @@ function AuthWrapper() {
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }, [isSubmitting, dispatch, closeModal, router]);
 
-  const handleEmailLinkAuth = async () => {
+  const handleEmailLinkAuth = useCallback(async () => {
     if (isSubmitting || !isEmailValid) return;
     setIsSubmitting(true);
     try {
@@ -94,7 +94,7 @@ function AuthWrapper() {
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }, [isSubmitting, isEmailValid, email]);
 
   return (
     <div className="fixed inset-0 z-[100]" onClick={closeModal}>
@@ -167,4 +167,4 @@ function AuthWrapper() {
   );
 }
 
-export default AuthWrapper;
+export default React.memo(AuthWrapper);

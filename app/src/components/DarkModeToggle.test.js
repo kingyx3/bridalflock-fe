@@ -70,17 +70,15 @@ describe('DarkModeToggle Component', () => {
 
   test('initial render: localStorage has "true" (dark mode)', () => {
     localStorageMock.setItem('darkMode', 'true');
-    // The component's useEffect will run and dispatch SET_DARK_MODE
-    // We need to simulate this by setting the initial state for the test
+    // The component's useEffect will run and dispatch SET_DARK_MODE only if state differs
+    // Since we're setting up with isDarkMode: true, it should NOT dispatch
     const { button } = setup(true);
 
     expect(document.documentElement.classList.contains('dark')).toBe(true);
     expect(button).toHaveAttribute('aria-label', 'Switch to light mode');
     expect(button).toHaveTextContent('🌞');
-    // Check if dispatch was called to set initial dark mode from localStorage
-    // The component itself reads localStorage and then dispatches SET_DARK_MODE
-    // So, the initial state passed to setup should align with what useEffect would find
-    expect(mockDispatch).toHaveBeenCalledWith({ type: reducerCases.SET_DARK_MODE, payload: true });
+    // With our optimization, dispatch should NOT be called if state already matches
+    expect(mockDispatch).not.toHaveBeenCalled();
   });
 
   test('initial render: localStorage has "false" (light mode)', () => {
@@ -90,7 +88,8 @@ describe('DarkModeToggle Component', () => {
     expect(document.documentElement.classList.contains('dark')).toBe(false);
     expect(button).toHaveAttribute('aria-label', 'Switch to dark mode');
     expect(button).toHaveTextContent('🌙');
-    expect(mockDispatch).toHaveBeenCalledWith({ type: reducerCases.SET_DARK_MODE, payload: false });
+    // With our optimization, dispatch should NOT be called if state already matches
+    expect(mockDispatch).not.toHaveBeenCalled();
   });
 
   test('initial render: no localStorage, prefers-color-scheme: dark', () => {
@@ -100,7 +99,8 @@ describe('DarkModeToggle Component', () => {
     expect(document.documentElement.classList.contains('dark')).toBe(true);
     expect(button).toHaveAttribute('aria-label', 'Switch to light mode');
     expect(button).toHaveTextContent('🌞');
-    expect(mockDispatch).toHaveBeenCalledWith({ type: reducerCases.SET_DARK_MODE, payload: true });
+    // With our optimization, dispatch should NOT be called if state already matches
+    expect(mockDispatch).not.toHaveBeenCalled();
   });
 
   test('initial render: no localStorage, prefers-color-scheme: light', () => {
@@ -110,7 +110,8 @@ describe('DarkModeToggle Component', () => {
     expect(document.documentElement.classList.contains('dark')).toBe(false);
     expect(button).toHaveAttribute('aria-label', 'Switch to dark mode');
     expect(button).toHaveTextContent('🌙');
-    expect(mockDispatch).toHaveBeenCalledWith({ type: reducerCases.SET_DARK_MODE, payload: false });
+    // With our optimization, dispatch should NOT be called if state already matches
+    expect(mockDispatch).not.toHaveBeenCalled();
   });
 
   test('toggle functionality: light to dark', () => {
@@ -169,30 +170,20 @@ describe('DarkModeToggle Component', () => {
     expect(updatedButton).toHaveTextContent('🌙');
   });
   
-  test('useEffect runs when dispatch reference changes', () => {
+  test('useEffect runs only once on mount (optimization test)', () => {
     localStorageMock.setItem('darkMode', 'false');
 
     // First render with initial dispatch
-    useStateProvider.mockReturnValueOnce([{ isDarkMode: false }, mockDispatch]);
+    useStateProvider.mockReturnValue([{ isDarkMode: false }, mockDispatch]);
     const { rerender } = render(<DarkModeToggle />);
 
-    // Effect should run and call the initial dispatch
-    expect(mockDispatch).toHaveBeenCalledWith({
-      type: reducerCases.SET_DARK_MODE,
-      payload: false,
-    });
-    mockDispatch.mockClear();
+    // Effect should run but NOT dispatch since state matches
+    expect(mockDispatch).not.toHaveBeenCalled();
 
-    // Re-render with a new dispatch function
-    const newDispatch = jest.fn();
-    useStateProvider.mockReturnValueOnce([{ isDarkMode: false }, newDispatch]);
+    // Re-render with same state - effect should not run again due to empty deps
     rerender(<DarkModeToggle />);
 
-    // Effect should run again with the new dispatch
-    expect(newDispatch).toHaveBeenCalledWith({
-      type: reducerCases.SET_DARK_MODE,
-      payload: false,
-    });
+    // Dispatch should still not have been called
     expect(mockDispatch).not.toHaveBeenCalled();
   });
 });

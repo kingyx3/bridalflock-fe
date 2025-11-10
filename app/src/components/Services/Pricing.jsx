@@ -4,10 +4,10 @@ import { BiRightArrowAlt } from "react-icons/bi";
 import { BsCheckLg } from "react-icons/bs";
 import { useStateProvider } from "../../context/StateContext";
 import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 function Pricing({ searchDate }) {
-  const [{ serviceData, user }, dispatch] = useStateProvider();
+  const [{ serviceData, user }] = useStateProvider();
   const router = useRouter();
   const [selectedTier, setSelectedTier] = useState(null);
 
@@ -16,6 +16,21 @@ function Pricing({ searchDate }) {
       setSelectedTier(serviceData.tiers[0]);
     }
   }, [serviceData]);
+
+  const handleEditClick = useCallback(() => {
+    router.push(`/seller/services/${serviceData.id}`);
+  }, [router, serviceData?.id]);
+
+  const handleCheckoutClick = useCallback(() => {
+    if (selectedTier) {
+      router.push(
+        `/checkout?serviceId=${serviceData.id}&tierId=${selectedTier.id}&serviceDate=${searchDate}`
+      );
+    } else {
+      // Handle the case where no tier is selected, maybe show an alert or disable the button
+      alert("Please select a tier to continue.");
+    }
+  }, [router, serviceData?.id, selectedTier, searchDate]);
 
   if (!serviceData?.tiers || serviceData.tiers.length === 0) {
     return (
@@ -80,7 +95,7 @@ function Pricing({ searchDate }) {
       {serviceData.userId === user?.uid ? (
         <button
           className="flex items-center bg-accent hover:bg-pink-500 dark:hover:bg-pink-600 text-white py-2 justify-center font-bold text-lg relative rounded transition-colors mt-4"
-          onClick={() => router.push(`/seller/services/${serviceData.id}`)}
+          onClick={handleEditClick}
         >
           <span>Edit</span>
           <BiRightArrowAlt className="text-2xl absolute right-4" />
@@ -88,16 +103,7 @@ function Pricing({ searchDate }) {
       ) : (
         <button
           className="flex items-center bg-accent hover:bg-pink-500 dark:hover:bg-pink-600 text-white py-2 justify-center font-bold text-lg relative rounded transition-colors mt-4"
-          onClick={() => {
-            if (selectedTier) {
-              router.push(
-                `/checkout?serviceId=${serviceData.id}&tierId=${selectedTier.id}&serviceDate=${searchDate}`
-              );
-            } else {
-              // Handle the case where no tier is selected, maybe show an alert or disable the button
-              alert("Please select a tier to continue.");
-            }
-          }}
+          onClick={handleCheckoutClick}
           disabled={!selectedTier}
         >
           <span>Continue</span>
@@ -108,4 +114,4 @@ function Pricing({ searchDate }) {
   );
 }
 
-export default Pricing;
+export default React.memo(Pricing);
