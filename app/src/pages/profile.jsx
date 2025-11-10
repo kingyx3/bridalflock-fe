@@ -26,15 +26,23 @@ function Profile() {
     description: "",
   });
 
+  // Memoize the relevant user properties to avoid unnecessary effect triggers
+  const userInitData = React.useMemo(() => ({
+    uid: user?.uid,
+    userName: user?.userName,
+    description: user?.description,
+    avatar: user?.avatar,
+  }), [user?.uid, user?.userName, user?.description, user?.avatar]);
+
   useEffect(() => {
     if (user && !initializedRef.current) {
       // Only initialize once when user data first becomes available
       setData({
-        userName: user?.userName || "",
-        description: user?.description || "",
+        userName: userInitData.userName || "",
+        description: userInitData.description || "",
       });
-      if (user?.avatar) {
-        setAvatarSrc(user.avatar);
+      if (userInitData.avatar) {
+        setAvatarSrc(userInitData.avatar);
       }
       setIsLoaded(true);
       initializedRef.current = true;
@@ -43,7 +51,7 @@ function Profile() {
       initializedRef.current = false;
       setIsLoaded(false);
     }
-  }, [user]);
+  }, [user, userInitData]);
 
   // Handle cleanup for object URLs
   useEffect(() => {
@@ -58,15 +66,15 @@ function Profile() {
     // Debounced check for changes to reduce flickering
     const timeoutId = setTimeout(() => {
       const hasFormChanged =
-        data.userName !== (user?.userName || "") ||
-        data.description !== (user?.description || "") ||
+        data.userName !== (userInitData.userName || "") ||
+        data.description !== (userInitData.description || "") ||
         (avatarSrc && avatarSrc.startsWith('blob:')); // Check if new image is selected
 
       setHasChanged(hasFormChanged);
     }, 100); // Small delay to debounce rapid state changes
 
     return () => clearTimeout(timeoutId);
-  }, [data, user, avatarSrc]);
+  }, [data.userName, data.description, userInitData.userName, userInitData.description, avatarSrc]);
 
   const handleImageUploadAndSave = async (e) => {
     const file = e.target.files?.[0];
