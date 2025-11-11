@@ -113,8 +113,11 @@ function AuthSync({ children }) {
             // toast.error("Could not load full profile information.");
           }
 
-          // Keep existing redirect logic
-          navigateToRedirect();
+          // Only redirect if there's a stored redirect URL (user was trying to access a protected page)
+          // Don't redirect on every auth state change as it causes navigation loops
+          if (typeof window !== 'undefined' && sessionStorage.getItem('redirectUrl')) {
+            navigateToRedirect();
+          }
         } else {
           // This part remains the same
           dispatch({ type: reducerCases.CLEAR_USER });
