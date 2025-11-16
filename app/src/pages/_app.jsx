@@ -98,11 +98,8 @@ function AuthSync({ children }) {
 
             dispatch({ type: reducerCases.SET_USER, user: mergedUserObject });
 
-            // If the user has no username, redirect to profile creation
-            if (!profileData.userName) {
-              router.push("/profile?new=true");
-              return;
-            }
+            // Username check is now handled by the Layout component (line 197)
+            // to avoid race conditions and ensure proper context updates
 
           } catch (error) {
             console.error("Failed to fetch user profile data:", error);
