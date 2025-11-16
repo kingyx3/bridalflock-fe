@@ -83,14 +83,14 @@ describe('ConversationList', () => {
       return jest.fn();
     });
 
-    render(<ConversationList />);
+    render(<ConversationList userRole="buyer" />);
 
     await waitFor(() => {
       expect(screen.getByText(/Chat with: vendor1/)).toBeInTheDocument();
       expect(screen.getByText(/Chat with: buyer2/)).toBeInTheDocument();
     });
-    expect(screen.getByText(/Chat with: vendor1/).closest('a')).toHaveAttribute('href', '/messages/chat1');
-    expect(screen.getByText(/Chat with: buyer2/).closest('a')).toHaveAttribute('href', '/messages/chat2');
+    expect(screen.getByText(/Chat with: vendor1/).closest('a')).toHaveAttribute('href', '/buyer/messages/chat1');
+    expect(screen.getByText(/Chat with: buyer2/).closest('a')).toHaveAttribute('href', '/buyer/messages/chat2');
   });
 
   it('calls unsubscribe when component unmounts', () => {

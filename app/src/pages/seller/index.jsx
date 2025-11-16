@@ -137,7 +137,7 @@ function Index() {
                   <ActionButton
                     label="Messages"
                     icon="💬"
-                    onClick={() => navigate("/messages")}
+                    onClick={() => navigate("/seller/messages")}
                   />
                   <ActionButton
                     label="Account"

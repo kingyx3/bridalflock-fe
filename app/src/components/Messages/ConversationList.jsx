@@ -20,7 +20,7 @@ const formatTimestamp = (timestamp) => {
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 };
 
-const ConversationList = () => {
+const ConversationList = ({ userRole = 'buyer' }) => {
   const [conversations, setConversations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -89,7 +89,7 @@ const ConversationList = () => {
   return (
     <div className="space-y-4">
       {conversations.map((convo) => (
-        <Link href={`/messages/${convo.id}`} key={convo.id} className="block p-4 border border-gray-200 rounded-lg hover:bg-gray-50 dark:border-neutral-medium dark:hover:bg-neutral-dark-alt transition-colors duration-150">
+        <Link href={`/${userRole}/messages/${convo.id}`} key={convo.id} className="block p-4 border border-gray-200 rounded-lg hover:bg-gray-50 dark:border-neutral-medium dark:hover:bg-neutral-dark-alt transition-colors duration-150">
           <div className="flex justify-between items-start"> {/* items-start for better alignment with multi-line text */}
             <div className="flex-grow min-w-0"> {/* Added flex-grow and min-w-0 to ensure h3 can truncate if needed */}
               <h3 className={`text-md font-semibold text-neutral-dark dark:text-neutral-light ${convo.unreadCount > 0 ? 'font-bold' : ''}`}>
