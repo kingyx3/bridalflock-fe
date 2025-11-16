@@ -52,8 +52,8 @@ function AppContent({ Component, pageProps }) {
   return (
     <>
       <AuthSync>
-        {(userId, isLoading, initialAuthChecked) => (
-          <Layout userId={userId} isLoading={isLoading} initialAuthChecked={initialAuthChecked}>
+        {(userId, isLoading, initialAuthChecked, profileDataLoaded) => (
+          <Layout userId={userId} isLoading={isLoading} initialAuthChecked={initialAuthChecked} profileDataLoaded={profileDataLoaded}>
             <Component {...pageProps} />
           </Layout>
         )}
@@ -69,6 +69,7 @@ function AuthSync({ children }) {
   const [userId, setUserId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [initialAuthChecked, setInitialAuthChecked] = useState(false);
+  const [profileDataLoaded, setProfileDataLoaded] = useState(false);
 
   // Set persistence
   useEffect(() => {
@@ -85,6 +86,7 @@ function AuthSync({ children }) {
       try {
         if (user) {
           setUserId(user.uid); // Keep this
+          setProfileDataLoaded(false); // Reset profile data loaded state
           try {
             // Fetch additional user profile data from Firestore
             const profileData = await getUserProfile(user.uid);
@@ -97,6 +99,7 @@ function AuthSync({ children }) {
             };
 
             dispatch({ type: reducerCases.SET_USER, user: mergedUserObject });
+            setProfileDataLoaded(true); // Mark profile data as loaded
 
             // Username check is now handled by the Layout component (line 197)
             // to avoid race conditions and ensure proper context updates
@@ -106,6 +109,7 @@ function AuthSync({ children }) {
             // If fetching profile data fails, dispatch the basic auth user object
             // This allows the app to function with at least the auth details.
             dispatch({ type: reducerCases.SET_USER, user });
+            setProfileDataLoaded(true); // Mark as loaded even on error to prevent infinite loading
             // Optionally, you could dispatch a specific error state or show a non-blocking toast
             // toast.error("Could not load full profile information.");
           }
@@ -119,6 +123,7 @@ function AuthSync({ children }) {
           // This part remains the same
           dispatch({ type: reducerCases.CLEAR_USER });
           setUserId(null);
+          setProfileDataLoaded(false);
         }
       } catch (error) {
         console.error("Auth state error:", error);
@@ -162,7 +167,7 @@ function AuthSync({ children }) {
     handleEmailSignIn();
   }, [dispatch, navigateToRedirect]); // Updated dependencies
 
-  return children(userId, isLoading, initialAuthChecked);
+  return children(userId, isLoading, initialAuthChecked, profileDataLoaded);
 }
 
 // Define public paths outside component to avoid recreating on each render
@@ -181,7 +186,7 @@ const isPublicPath = (pathname) => {
   return false;
 };
 
-function Layout({ children, userId, isLoading, initialAuthChecked }) {
+function Layout({ children, userId, isLoading, initialAuthChecked, profileDataLoaded }) {
   const { navigate, navigateWithRedirect, router } = useNavigation();
   const [{ user }, dispatch] = useStateProvider();
 
@@ -191,7 +196,8 @@ function Layout({ children, userId, isLoading, initialAuthChecked }) {
     const pathIsProtected = !isPublicPath(router.pathname);
 
     // if user has no username, and is not on the profile page, redirect to the profile page
-    if (initialAuthChecked && !isLoading && user && !user.userName && router.pathname !== "/profile") {
+    // Only check this after profile data has been loaded to avoid false redirects
+    if (initialAuthChecked && !isLoading && profileDataLoaded && user && !user.userName && router.pathname !== "/profile") {
       navigate("/profile?new=true");
       return;
     }
@@ -204,7 +210,7 @@ function Layout({ children, userId, isLoading, initialAuthChecked }) {
         showLoginModal: true,
       });
     }
-  }, [initialAuthChecked, isLoading, userId, user, dispatch, navigate, navigateWithRedirect, router.pathname]);
+  }, [initialAuthChecked, isLoading, userId, user, profileDataLoaded, dispatch, navigate, navigateWithRedirect, router.pathname]);
 
   return (
     <>
