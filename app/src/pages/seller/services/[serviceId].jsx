@@ -116,7 +116,7 @@ function EditServicePage() {
 
       delete payload.currentStep; // Remove form-specific temp fields
 
-      await editService(serviceId, { ...payload, groupIndex: parseInt(String(groupIndex), 10) });
+      await editService({ serviceId, ...payload, groupIndex: parseInt(String(groupIndex), 10) });
       toast.success("Service updated successfully!");
       router.push("/seller/services");
     } catch (error) {
