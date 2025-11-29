@@ -54,7 +54,7 @@ function BuyerDashboard() {
                   title="Unread Messages"
                   value={user.unreadMessages || 0}
                   icon="✉️"
-                  onClick={() => navigate("/messages")}
+                  onClick={() => navigate("/buyer/messages")}
                 />
                 <DashboardCard
                   title="Total Spend"
@@ -75,7 +75,7 @@ function BuyerDashboard() {
                   <ActionButton
                     label="Messages"
                     icon="💬"
-                    onClick={() => navigate("/messages")}
+                    onClick={() => navigate("/buyer/messages")}
                   />
                   <ActionButton
                     label="Account"

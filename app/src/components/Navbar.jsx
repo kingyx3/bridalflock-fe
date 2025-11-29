@@ -146,7 +146,7 @@ function Navbar({ userId, isLoading, initialAuthChecked }) {
               {user && ( // Add this condition
                 <li>
                   <button
-                    onClick={() => navigate("/messages")}
+                    onClick={() => navigate(isSeller ? "/seller/messages" : "/buyer/messages")}
                     className={primaryBtnClass}
                   >
                     Messages
@@ -228,7 +228,7 @@ function Navbar({ userId, isLoading, initialAuthChecked }) {
                 {user && ( // Add this condition
                   <button
                     onClick={() => {
-                      navigate("/messages");
+                      navigate(isSeller ? "/seller/messages" : "/buyer/messages");
                       setMobileMenuOpen(false);
                     }}
                     className={`w-full text-left py-2 ${primaryBtnClass}`}
